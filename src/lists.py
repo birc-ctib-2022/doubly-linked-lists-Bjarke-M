@@ -101,7 +101,11 @@ def keep(x: DLList[T], p: Callable[[T], bool]) -> None:
     >>> print(x)
     [2, 4]
     """
-    ...
+    link = x.head.next
+    while link is not x.head:
+        if not p(link.val):
+            remove_link(link)
+        link = link.next
 
 
 def reverse(x: DLList[T]) -> None:
@@ -113,7 +117,31 @@ def reverse(x: DLList[T]) -> None:
     >>> print(x)
     [5, 4, 3, 2, 1]
     """
-    ...
+    link = x.head.next
+    end = x.head.prev
+    while link is not end:
+            insert_after(end,link.val)   #not the most efficient
+            remove_link(link)            # as we add one and delete one 
+            link = link.next             # but for now it works   
+
+
+
+def swap(link,next) -> None:
+    insert_after(link,next.val)
+    insert_after(next,link.val)   
+    remove_link(link)
+    remove_link(next)
+    link= link.next    
+
+def is_sorted(x : DLList[S]) -> bool:
+    link = x.head.next
+    while link.next is not x.head:
+        if link.val < link.next.val:
+            link = link.next
+        else:
+            return False
+    return True
+
 
 
 def sort(x: DLList[S]) -> None:
@@ -125,4 +153,13 @@ def sort(x: DLList[S]) -> None:
     >>> print(x)
     [1, 3, 4, 5, 6, 12]
     """
+    link = x.head.next
+    while is_sorted(x)==False:
+        if link.next.val is not None:
+            if link.val > link.next.val:
+                swap(link,link.next)                #complexity bad
+            link = link.next                        #happiness medium
+        else:
+            link = link.next.next
     ...
+
