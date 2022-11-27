@@ -89,6 +89,22 @@ class DLList(Generic[T]):
         return f"[{', '.join(elms)}]"
     __repr__ = __str__  # because why not?
 
+    def __iter__(self) -> Iterable[T]:     #iterator 
+        link = self.head.next
+        while link != self.head:
+            yield link.val
+            link = link.next 
+
+    def __eq__(self, other: DLList):
+        x, y = self.head.next, other.head.next
+        while x != self.head and y != other.head:
+            if x.val != y.val:
+                return False
+            x, y = x.next, y.next
+        return x == self.head and y == other.head 
+
+
+
 
 # Exercises
 
@@ -108,6 +124,8 @@ def keep(x: DLList[T], p: Callable[[T], bool]) -> None:
         link = link.next
 
 
+
+
 def reverse(x: DLList[T]) -> None:
     """
     Reverse the list x.
@@ -124,9 +142,14 @@ def reverse(x: DLList[T]) -> None:
             remove_link(link)            # as we add one and delete one 
             link = link.next             # but for now it works   
 
+# def reverse(x: DLList[T]) -> None:
+#     link = x.head
+#     while link != x.head:
+#         link.prev, link.next = link.next, link.prev
+#         link = link.prev  # that was link.next a moment before
+#         if link is x.head: return
 
-
-def swap(link,next) -> None:
+def swap(x,link,next) -> None:
     insert_after(link,next.val)
     insert_after(next,link.val)   
     remove_link(link)
@@ -157,9 +180,67 @@ def sort(x: DLList[S]) -> None:
     while is_sorted(x)==False:
         if link.next.val is not None:
             if link.val > link.next.val:
-                swap(link,link.next)                #complexity bad
+                swap(x,link,link.next)                #complexity bad
             link = link.next                        #happiness medium
         else:
             link = link.next.next
     ...
 
+
+#trying a merge sort, and it's not working yet but hey at some point it might 
+# def merge(self,x:DLList[T],y:DLList[T]):
+#     if x==None: return y
+#     if y==None: return x
+#     linkx = x.head.next
+#     linky = y.head.next
+#     if linkx.val < linky.val:
+#         linkx = self.merge(linkx.next,y)
+#         linkx.next.prev=x; 
+#         linkx.prev=None
+#         return x
+#     else:
+#         linky = self.merge(linky.next,x)
+#         linky.next.prev = y
+#         linky.prev = None
+#         return y
+
+# def mergesort(self,link): 
+#     link = self.head.next
+#     if (link==self.head): 
+#         return self.head; 
+#     half = self.div(link); 
+#     link = self.mergesort(link)
+#     half = self.mergesort(half)
+#     return self.merge(link,half)
+
+# # def div(self,link): 
+# #     first=last=link; 
+# #     while(True): 
+# #         if (first.next==None): 
+# #             break
+# #         if ((first.next).next==None): 
+# #             break
+# #         first=(first.next).next
+# #         last=last.next
+# #     t=last.next
+# #     last.next=None
+# #     return t
+
+
+
+def wrap(f):
+    def wrapped(x: DLList, *args):
+        copy = DLList(iter(x))
+        f(copy, *args)
+        return copy
+    return wrapped
+
+# def _keep(x: DLList[T], p: Callable[[T], bool]) -> DLList[T]:
+#     y = DLList(iter(x))
+#     keep(y, p)
+#     return y
+
+def _swap(x ,i, j) -> DLList[T]:
+    y = DLList(iter(x))
+    swap(y,i,j)
+    return y
